@@ -1,0 +1,85 @@
+﻿import java.awt.AWTException;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.HttpURLConnection;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.awt.Robot;
+import java.util.Scanner;
+public class QuoteBot {
+        public static void main(String[] args) throws IOException, InterruptedException, AWTException {
+                
+                Scanner credential = new Scanner(System.in);
+                System.out.println("Welcome to the Kanye Bot.");
+                Thread.sleep(2000);
+                System.out.println("\nThis bot auto-generates Kanye quotes based on your parameters.");
+                Thread.sleep(3000);
+                System.out.println("\nHow many Kanye quotes would you like to generate?");
+                System.out.println("(type a low number to get the swing of things)");
+                int quoteNumber = credential.nextInt();
+                System.out.println("How many seconds apart would you like to stagger each quote?");
+                int seconds = credential.nextInt();
+                int timer = seconds * 1000;
+                System.out.println("\nClick the chat/message box you plan to feed the quotes into.");
+                Thread.sleep(3000);
+                System.out.println("\nKanye Bot will be initiating in 10 seconds.");
+                credential.close();
+                int countDown = 10;
+                while (countDown >= 0) {
+                        System.out.print(countDown + " ");
+                        Thread.sleep(1000);
+                        countDown--;
+                }
+                String OSVersion = System.getProperty("os.name");
+                switch (OSVersion) {
+                case "Windows 10":
+                case "Windows 11":
+                        int loop = 0;
+                        while (loop < quoteNumber) {
+                        URL url = new URL("https://api.kanye.rest/");
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.connect();
+                        InputStream inputStream = connection.getInputStream();
+                        StringWriter printer = new StringWriter();
+                        PrintWriter writer = new PrintWriter(printer);
+                        for (int i = 0; i < 10; i++) {
+                                inputStream.read();
+                        }
+                        int c;
+                        while ((c = inputStream.read()) != -1 && c != '"') {
+                                writer.write(c);
+                        }
+                        String text = printer.toString();
+                        writer.close();
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        StringSelection stringSelection = new StringSelection(text);
+                        clipboard.setContents(stringSelection, stringSelection);
+                        Robot robot = new Robot();
+                        robot.keyPress(KeyEvent.VK_CONTROL);
+                        robot.keyPress(KeyEvent.VK_V);
+                        robot.keyRelease(KeyEvent.VK_V);
+                        robot.keyRelease(KeyEvent.VK_CONTROL);
+                        Thread.sleep(500);
+                        robot.keyPress(KeyEvent.VK_ENTER);
+                        robot.keyRelease(KeyEvent.VK_ENTER);
+                        Thread.sleep(timer);
+                        loop++;
+                        Thread.sleep(1000);
+                        }
+                        break;
+                case "Mac OS X":
+                        System.out.println("This OS is unsupported");
+                        break;
+                        default:
+                                System.out.println("Unable to identify OS");
+                                break;
+                }
+                System.out.println("\n\nThe Kanye Bot has ended.");
+        }
+}
